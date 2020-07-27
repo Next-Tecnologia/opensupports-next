@@ -1,0 +1,19 @@
+.create-ticket-form {
+
+    &__file {
+        text-align: left;
+        .file-uploader__custom {
+            background-color: $secondary-blue;
+        }
+    }
+
+    &__message {
+        margin-top: 20px;
+    }
+
+    &__captcha {
+        margin: 0 auto 20px;
+        height: 78px;
+        width: 304px;
+    }
+}

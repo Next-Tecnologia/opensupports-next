@@ -1,0 +1,44 @@
+@import "../scss/vars";
+
+.checkbox {
+    color: $primary-black;
+    border-radius: 5px;
+    display: inline-block;
+
+    &__box {
+        display: none;
+    }
+
+    &__icon {
+        color: $medium-grey;
+        outline: none;
+
+        &:focus {
+            color: $grey;
+        }
+    }
+
+    &__label {
+        margin-left: 10px;
+    }
+
+    &_checked {
+        .checkbox__icon {
+            color: $light-blue;
+
+            &:focus {
+                color: lighten($light-blue, 5%);;
+            }
+        }
+    }
+
+    &_disabled {
+        .checkbox__icon {
+            color: $light-grey;
+
+            &:focus {
+                color: $light-grey;
+            }
+        }
+    }
+}
