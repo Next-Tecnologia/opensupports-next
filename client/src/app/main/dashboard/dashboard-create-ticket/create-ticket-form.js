@@ -41,8 +41,13 @@ class CreateTicketForm extends React.Component {
             email: '',
             name: '',
             language: this.props.language
-        }
+        },
+        clients: []
     };
+
+    componentDidMount() {
+        this.getClients();
+    }
 
     render() {
         return (
@@ -52,18 +57,9 @@ class CreateTicketForm extends React.Component {
                     {(!this.props.userLogged) ? this.renderEmailAndName() : null}
                     <FormField label={i18n('TITLE')} name="title" validation="TITLE" required field="input" fieldProps={{size: 'large'}}/>
                     <div className="row">
-                        {!(this.props.isDefaultDepartmentLocked*1) || this.props.isStaff ?
-                            <FormField className="col-md-5" label={i18n('DEPARTMENT')} name="departmentIndex" field="select" decorator={DepartmentDropdown} fieldProps={{
-                                departments: this.getDepartments(),
-                                size: 'medium'
-                            }} /> : null
-                        }    
-                        {!this.props.onlyOneSupportedLanguage ?  
-                            <FormField className="col-md-5" label={i18n('LANGUAGE')} name="language" field="select" decorator={LanguageSelector} fieldProps={{
-                                type: 'supported',
-                                size: 'medium'
-                            }}/> : null
-                        }
+                        {this.renderDepartments()}
+                        {this.renderClients()}
+                        {this.renderLanguages()}
                     </div>
                     <FormField
                         label={i18n('CONTENT')}
@@ -86,6 +82,56 @@ class CreateTicketForm extends React.Component {
         // return SessionStore.getDepartments();
 
         return this.props.departments;
+    }
+
+    getClients() {
+        API.call({
+            path: '/client/get-clients',
+            dataAsForm: false,
+            data: null
+        }).then(res => {
+            if (showLogs) console.log(res.data);
+            this.setState({
+                ...this.state,
+                clients: res.data.clients
+            })
+        })
+    }
+
+    renderDepartments() {
+        if ((this.props.isDefaultDepartmentLocked*1) && !this.props.isStaff) {
+            return null;
+        }
+        return (
+            <FormField className="col-md-4" label={i18n('DEPARTMENT')} name="departmentIndex" field="select" decorator={DepartmentDropdown} fieldProps={{
+                departments: this.getDepartments(),
+                size: 'medium'
+            }} />
+        )
+    }
+
+    renderClients() {
+        if (!this.props.isStaff) {
+            return null;
+        }
+
+        return (
+            <FormField className="col-md-4" label={i18n('CUSTOMER')} name="clientIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
+                    content: client.name
+                }))}} required/>
+        )
+    }
+
+    renderLanguages() {
+        if (this.props.onlyOneSupportedLanguage) {
+            return null;
+        }
+        return (
+            <FormField className="col-md-4" label={i18n('LANGUAGE')} name="language" field="select" decorator={LanguageSelector} fieldProps={{
+                type: 'supported',
+                size: 'medium'
+            }}/>
+        )
     }
 
     renderEmailAndName() {
@@ -182,6 +228,6 @@ export default connect((store) => {
         isDefaultDepartmentLocked: store.config['default-is-locked'],
         allowAttachments: store.config['allow-attachments'],
         defaultDepartmentId: store.config['default-department-id'],
-	departments: store.session.userDepartments
+	    departments: store.session.userDepartments
     };
 })(CreateTicketForm);
