@@ -42,7 +42,8 @@ class CreateTicketForm extends React.Component {
             name: '',
             language: this.props.language
         },
-        clients: []
+        clients: [],
+        clientUsers: []
     };
 
     componentDidMount() {
@@ -59,6 +60,7 @@ class CreateTicketForm extends React.Component {
                     <div className="row">
                         {this.renderDepartments()}
                         {this.renderClients()}
+                        {this.renderUsers()}
                         {this.renderLanguages()}
                     </div>
                     <FormField
@@ -98,6 +100,20 @@ class CreateTicketForm extends React.Component {
         })
     }
 
+    getClientUsers() {
+        API.call({
+            path: '/client/get-client-users',
+            dataAsForm: false,
+            data: null
+        }).then(res => {
+            if (showLogs) console.log(res.data);
+            this.setState({
+                ...this.state,
+                clientUsers: res.data.clientUsers
+            })
+        })
+    }
+
     renderDepartments() {
         if ((this.props.isDefaultDepartmentLocked*1) && !this.props.isStaff) {
             return null;
@@ -117,6 +133,18 @@ class CreateTicketForm extends React.Component {
 
         return (
             <FormField className="col-md-4" label={i18n('CUSTOMER')} name="clientIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
+                    content: client.name
+                }))}} onChange={this.onChangeClient} required/>
+        )
+    }
+
+    renderUsers() {
+        if (!this.props.isStaff) {
+            return null;
+        }
+
+        return (
+            <FormField className="col-md-4" label={i18n('USER')} name="userIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
                     content: client.name
                 }))}} required/>
         )
@@ -177,6 +205,10 @@ class CreateTicketForm extends React.Component {
             values: this.state.form,
             onChange: form => this.setState({form})
         };
+    }
+
+    onChangeClient(event) {
+        console.log('debug:here', event);
     }
 
     onSubmit(formState) {
