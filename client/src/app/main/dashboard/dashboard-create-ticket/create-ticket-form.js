@@ -117,16 +117,21 @@ class CreateTicketForm extends React.Component {
     }
 
     getClientUsers() {
-        const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
-        API.call({
-            path: '/client/get-client-users',
-            dataAsForm: true,
-            data: { clientId }
-        }).then(res => {
-            if (showLogs) console.log(res.data);
-            this.setState({
-                ...this.state,
-                clientUsers: res.data.clientUsers
+        this.setState({
+            ...this.state,
+            clientUsers: []
+        }, () => {
+            const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
+            API.call({
+                path: '/client/get-client-users',
+                dataAsForm: true,
+                data: { clientId }
+            }).then(res => {
+                if (showLogs) console.log(res.data);
+                this.setState({
+                    ...this.state,
+                    clientUsers: res.data.clientUsers
+                })
             })
         })
     }
