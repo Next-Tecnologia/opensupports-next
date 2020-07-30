@@ -48,6 +48,7 @@ class CreateController extends Controller {
     private $ticketNumber;
     private $email;
     private $name;
+    private $clientUserId;
 
     public function validations() {
         $validations = [
@@ -64,6 +65,14 @@ class CreateController extends Controller {
                 'departmentId' => [
                     'validation' => DataValidator::oneOf(DataValidator::dataStoreId('department'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEPARTMENT
+                ],
+                'clientId' => [
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('client')),
+                    'error' => ERRORS::INVALID_CLIENT
+                ],
+                'clientUserId' => [
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('user')),
+                    'error' => ERRORS::INVALID_USER
                 ],
                 'language' => [
                     'validation' => DataValidator::oneOf(DataValidator::in(Language::getSupportedLanguages()), DataValidator::nullType()),
@@ -87,6 +96,12 @@ class CreateController extends Controller {
             ];
         }
 
+        // Remove this validations, because only staff need set clientId and clientUserId
+        if (!Controller::isStaffLogged()) {
+            unset($validations['requestData']['clientId']);
+            unset($validations['requestData']['clientUserId']);
+        }
+
         return $validations;
     }
 
@@ -105,6 +120,10 @@ class CreateController extends Controller {
         $this->language = Controller::request('language');
         $this->email = Controller::request('email');
         $this->name = Controller::request('name');
+
+        if (Controller::isStaffLogged()) {
+            $this->clientUserId = Controller::request('clientUserId');
+        }
         
         if(!Controller::isStaffLogged() && Department::getDataStore($this->departmentId)->private){
             throw new Exception(ERRORS::INVALID_DEPARTMENT);
@@ -203,6 +222,15 @@ class CreateController extends Controller {
 
             $this->email = $author->email;
             $this->name = $author->name;
+        }
+
+        if (Controller::isStaffLogged()) {
+            $authorUser = User::getUser($this->clientUserId);
+            // Now, author is instance of User, then not replace author_staff_id
+            // but add author_id that represent normal user
+            $ticket->setAuthor($authorUser);
+            $authorUser->sharedTicketList->add($ticket);
+            $authorUser->store();
         }
 
         $author->store();
