@@ -40,7 +40,9 @@ class CreateTicketForm extends React.Component {
             departmentIndex: getPublicDepartmentIndexFromDepartmentId(this.props.defaultDepartmentId),
             email: '',
             name: '',
-            language: this.props.language
+            language: this.props.language,
+            clientIndex: 0,
+            clientUserIndex: 0
         },
         clients: [],
         clientUsers: []
@@ -48,6 +50,12 @@ class CreateTicketForm extends React.Component {
 
     componentDidMount() {
         this.getClients();
+    }
+
+    componentDidUpdate(_prevProps, prevState) {
+        if (prevState.form.clientIndex !== this.state.form.clientIndex) {
+            this.getClientUsers()
+        }
     }
 
     render() {
@@ -96,15 +104,20 @@ class CreateTicketForm extends React.Component {
             this.setState({
                 ...this.state,
                 clients: res.data.clients
-            })
+            }, () => this.getClientUsers())
         })
     }
 
+    getClientFromClientIndex(index) {
+        return this.state.clients[index];
+    }
+
     getClientUsers() {
+        const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
         API.call({
             path: '/client/get-client-users',
-            dataAsForm: false,
-            data: null
+            dataAsForm: true,
+            data: { clientId }
         }).then(res => {
             if (showLogs) console.log(res.data);
             this.setState({
@@ -134,7 +147,7 @@ class CreateTicketForm extends React.Component {
         return (
             <FormField className="col-md-4" label={i18n('CUSTOMER')} name="clientIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
                     content: client.name
-                }))}} onChange={this.onChangeClient} required/>
+                }))}} required/>
         )
     }
 
@@ -144,8 +157,8 @@ class CreateTicketForm extends React.Component {
         }
 
         return (
-            <FormField className="col-md-4" label={i18n('USER')} name="userIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
-                    content: client.name
+            <FormField className="col-md-4" label={i18n('USER')} name="clientUserIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clientUsers.map(clientUser => ({
+                    content: clientUser.name
                 }))}} required/>
         )
     }
@@ -205,10 +218,6 @@ class CreateTicketForm extends React.Component {
             values: this.state.form,
             onChange: form => this.setState({form})
         };
-    }
-
-    onChangeClient(event) {
-        console.log('debug:here', event);
     }
 
     onSubmit(formState) {
