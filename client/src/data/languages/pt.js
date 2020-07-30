@@ -44,6 +44,7 @@ export default {
     'CANCEL': 'Cancelar',
     'MY_ACCOUNT': 'Minha conta',
     'DASHBOARD': 'painel de controle',
+    'USER': 'usuário',
     'USERS': 'usuários',
     'SETTINGS': 'Configurações',
     'STATISTICS': 'Estatisticas',

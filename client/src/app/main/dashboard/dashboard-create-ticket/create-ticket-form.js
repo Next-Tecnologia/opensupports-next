@@ -40,9 +40,23 @@ class CreateTicketForm extends React.Component {
             departmentIndex: getPublicDepartmentIndexFromDepartmentId(this.props.defaultDepartmentId),
             email: '',
             name: '',
-            language: this.props.language
-        }
+            language: this.props.language,
+            clientIndex: 0,
+            clientUserIndex: 0
+        },
+        clients: [],
+        clientUsers: []
     };
+
+    componentDidMount() {
+        this.getClients();
+    }
+
+    componentDidUpdate(_prevProps, prevState) {
+        if (prevState.form.clientIndex !== this.state.form.clientIndex) {
+            this.getClientUsers()
+        }
+    }
 
     render() {
         return (
@@ -52,18 +66,10 @@ class CreateTicketForm extends React.Component {
                     {(!this.props.userLogged) ? this.renderEmailAndName() : null}
                     <FormField label={i18n('TITLE')} name="title" validation="TITLE" required field="input" fieldProps={{size: 'large'}}/>
                     <div className="row">
-                        {!(this.props.isDefaultDepartmentLocked*1) || this.props.isStaff ?
-                            <FormField className="col-md-5" label={i18n('DEPARTMENT')} name="departmentIndex" field="select" decorator={DepartmentDropdown} fieldProps={{
-                                departments: this.getDepartments(),
-                                size: 'medium'
-                            }} /> : null
-                        }    
-                        {!this.props.onlyOneSupportedLanguage ?  
-                            <FormField className="col-md-5" label={i18n('LANGUAGE')} name="language" field="select" decorator={LanguageSelector} fieldProps={{
-                                type: 'supported',
-                                size: 'medium'
-                            }}/> : null
-                        }
+                        {this.renderDepartments()}
+                        {this.renderClients()}
+                        {this.renderUsers()}
+                        {this.renderLanguages()}
                     </div>
                     <FormField
                         label={i18n('CONTENT')}
@@ -86,6 +92,91 @@ class CreateTicketForm extends React.Component {
         // return SessionStore.getDepartments();
 
         return this.props.departments;
+    }
+
+    getClients() {
+        API.call({
+            path: '/client/get-clients',
+            dataAsForm: false,
+            data: null
+        }).then(res => {
+            if (showLogs) console.log(res.data);
+            this.setState({
+                ...this.state,
+                clients: res.data.clients
+            }, () => this.getClientUsers())
+        })
+    }
+
+    getClientFromClientIndex(index) {
+        return this.state.clients[index];
+    }
+
+    getClientUserFromClientUserIndex(index) {
+        return this.state.clientUsers[index];
+    }
+
+    getClientUsers() {
+        const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
+        API.call({
+            path: '/client/get-client-users',
+            dataAsForm: true,
+            data: { clientId }
+        }).then(res => {
+            if (showLogs) console.log(res.data);
+            this.setState({
+                ...this.state,
+                clientUsers: res.data.clientUsers
+            })
+        })
+    }
+
+    renderDepartments() {
+        if ((this.props.isDefaultDepartmentLocked*1) && !this.props.isStaff) {
+            return null;
+        }
+        return (
+            <FormField className="col-md-4" label={i18n('DEPARTMENT')} name="departmentIndex" field="select" decorator={DepartmentDropdown} fieldProps={{
+                departments: this.getDepartments(),
+                size: 'medium'
+            }} />
+        )
+    }
+
+    renderClients() {
+        if (!this.props.isStaff) {
+            return null;
+        }
+
+        return (
+            <FormField className="col-md-4" label={i18n('CUSTOMER')} name="clientIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clients.map(client => ({
+                    content: client.name
+                }))}} required/>
+        )
+    }
+
+    renderUsers() {
+        if (!this.props.isStaff) {
+            return null;
+        }
+
+        return (
+            <FormField className="col-md-4" label={i18n('USER')} name="clientUserIndex"  field="select" fieldProps={{size: 'medium', items: this.state.clientUsers.map(clientUser => ({
+                    content: clientUser.name
+                }))}} required/>
+        )
+    }
+
+    renderLanguages() {
+        if (this.props.onlyOneSupportedLanguage) {
+            return null;
+        }
+        return (
+            <FormField className="col-md-4" label={i18n('LANGUAGE')} name="language" field="select" decorator={LanguageSelector} fieldProps={{
+                type: 'supported',
+                size: 'medium'
+            }}/>
+        )
     }
 
     renderEmailAndName() {
@@ -143,12 +234,22 @@ class CreateTicketForm extends React.Component {
                 loading: true
             });
 
+            let ticketExtraData = {};
+
+            if (this.props.isStaff) {
+                ticketExtraData = {
+                    clientId: this.getClientFromClientIndex(this.state.form.clientIndex).id,
+                    clientUserId: this.getClientUserFromClientUserIndex(this.state.form.clientUserIndex).id
+                }
+            }
+
             API.call({
                 path: '/ticket/create',
                 dataAsForm: true,
                 data: _.extend({}, formState, TextEditor.getContentFormData(formState.content), {
                     captcha: captcha && captcha.getValue(),
-                    departmentId: this.getDepartments()[formState.departmentIndex].id
+                    departmentId: this.getDepartments()[formState.departmentIndex].id,
+                    ...ticketExtraData
                 })
             }).then(this.onTicketSuccess.bind(this, formState.email)).catch(this.onTicketFail.bind(this));
         }
@@ -182,6 +283,6 @@ export default connect((store) => {
         isDefaultDepartmentLocked: store.config['default-is-locked'],
         allowAttachments: store.config['allow-attachments'],
         defaultDepartmentId: store.config['default-department-id'],
-	departments: store.session.userDepartments
+	    departments: store.session.userDepartments
     };
 })(CreateTicketForm);

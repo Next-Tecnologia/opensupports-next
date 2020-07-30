@@ -4,7 +4,7 @@ client/package-lock.json
 tests/Gemfile.lock
 server/composer.lock
 server/vendor
-server/files/
+server/files/*
 !server/files/.gitkeep
 !server/files/.htaccess
 server/.dbdata
