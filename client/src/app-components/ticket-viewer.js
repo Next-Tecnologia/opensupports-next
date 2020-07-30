@@ -114,7 +114,7 @@ class TicketViewer extends React.Component {
                 <span className="ticket-viewer__number">#{ticketNumber}</span>
                 <span className="ticket-viewer__title">{title}</span>
                 <span className="ticket-viewer__flag">
-                    <Icon name={(language === 'en') ? 'us' : language}/>
+                    <Icon name={(language === 'en') ? 'us' : language ? language : 'br'}/>
                 </span>
                 {((author.id == userId && author.staff == userStaff) || userStaff) ? this.renderEditTitleOption() : null}
                 {editedTitle ? this.renderEditedTitleText() : null }
