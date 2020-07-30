@@ -112,6 +112,10 @@ class CreateTicketForm extends React.Component {
         return this.state.clients[index];
     }
 
+    getClientUserFromClientUserIndex(index) {
+        return this.state.clientUsers[index];
+    }
+
     getClientUsers() {
         const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
         API.call({
@@ -230,12 +234,22 @@ class CreateTicketForm extends React.Component {
                 loading: true
             });
 
+            let ticketExtraData = {};
+
+            if (this.props.isStaff) {
+                ticketExtraData = {
+                    clientId: this.getClientFromClientIndex(this.state.form.clientIndex).id,
+                    clientUserId: this.getClientUserFromClientUserIndex(this.state.form.clientUserIndex).id
+                }
+            }
+
             API.call({
                 path: '/ticket/create',
                 dataAsForm: true,
                 data: _.extend({}, formState, TextEditor.getContentFormData(formState.content), {
                     captcha: captcha && captcha.getValue(),
-                    departmentId: this.getDepartments()[formState.departmentIndex].id
+                    departmentId: this.getDepartments()[formState.departmentIndex].id,
+                    ...ticketExtraData
                 })
             }).then(this.onTicketSuccess.bind(this, formState.email)).catch(this.onTicketFail.bind(this));
         }
