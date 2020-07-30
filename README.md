@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/opensupports/opensupports.svg?branch=master)](https://travis-ci.org/opensupports/opensupports) v4.8.0
 
+## See [Next Tecnologia changes](#next-tecnologia-changes)
+
 OpenSupports is an open source ticket system built primarily with PHP and ReactJS.
 Please, visit our website for more information: [http://www.opensupports.com/](http://www.opensupports.com/)
 
@@ -87,3 +89,18 @@ If you're doing development, you can use a FakeSMTP server to see the mails that
 4. Set the port to 7070 and start the SMTP server.
 
 5. Every time the application sends an email, it will be reflected there.
+
+---
+
+## Next Tecnologia changes
+
+This version have additional features:
+
+- Some fixes in frontend ("intolerant errors")
+- List only departments associated with logged staff
+- List only users associated with logged staff
+- Client relationship with users and deparments
+- Capability of create ticket in another user (only staff)
+
+
+**Be careful** if you get a new version of OpenSupports and try merge with this project.
