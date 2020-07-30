@@ -46,6 +46,9 @@ class DataStoreId extends AbstractRule {
             case 'tag':
                 $dataStore =  \Tag::getDataStore($dataStoreId);
                 break;
+            case 'client':
+                $dataStore = \Client::getDataStore($dataStoreId);
+                break;
         }
 
         return !$dataStore->isNull();
@@ -61,7 +64,8 @@ class DataStoreId extends AbstractRule {
             'topic',
             'article',
             'customfield',
-            'tag'
+            'tag',
+            'client'
         ]);
     }
 }
