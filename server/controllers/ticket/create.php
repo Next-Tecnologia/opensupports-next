@@ -123,6 +123,9 @@ class CreateController extends Controller {
 
         if (Controller::isStaffLogged()) {
             $this->clientUserId = Controller::request('clientUserId');
+            if (!$this->validateClientUser()) {
+                throw new Exception(ERRORS::INVALID_USER);
+            }
         }
         
         if(!Controller::isStaffLogged() && Department::getDataStore($this->departmentId)->private){
@@ -222,9 +225,7 @@ class CreateController extends Controller {
 
             $this->email = $author->email;
             $this->name = $author->name;
-        }
-
-        if (Controller::isStaffLogged()) {
+        } else {
             $authorUser = User::getUser($this->clientUserId);
             // Now, author is instance of User, then not replace author_staff_id
             // but add author_id that represent normal user
@@ -292,5 +293,15 @@ class CreateController extends Controller {
         ]);
 
         $mailSender->send();
+    }
+
+    private function validateClientUser() {
+        $clientId = Controller::request('clientId');
+        $query = 'SELECT c.id FROM client as c INNER JOIN user as u ON c.id = u.client_id WHERE c.id = ? AND u.id = ?';
+        $results = RedBeanPHP\Facade::getAll($query, [$clientId, $this->clientUserId]);
+        if (count($results) > 0) {
+            return true;
+        }
+        return false;
     }
 }
