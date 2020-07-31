@@ -103,7 +103,7 @@ class CreateTicketForm extends React.Component {
             if (showLogs) console.log(res.data);
             this.setState({
                 ...this.state,
-                clients: res.data.clients
+                clients: [{id: 0, name: 'Interno'}, ...res.data.clients]
             }, () => this.getClientUsers())
         })
     }
@@ -122,6 +122,7 @@ class CreateTicketForm extends React.Component {
             clientUsers: []
         }, () => {
             const { id: clientId } = this.getClientFromClientIndex(this.state.form.clientIndex);
+            if (!clientId) return;
             API.call({
                 path: '/client/get-client-users',
                 dataAsForm: true,
@@ -161,7 +162,7 @@ class CreateTicketForm extends React.Component {
     }
 
     renderUsers() {
-        if (!this.props.isStaff) {
+        if (!this.props.isStaff || !this.state.form.clientIndex) {
             return null;
         }
 
@@ -241,7 +242,7 @@ class CreateTicketForm extends React.Component {
 
             let ticketExtraData = {};
 
-            if (this.props.isStaff) {
+            if (this.props.isStaff && this.state.form.clientIndex) {
                 ticketExtraData = {
                     clientId: this.getClientFromClientIndex(this.state.form.clientIndex).id,
                     clientUserId: this.getClientUserFromClientUserIndex(this.state.form.clientUserIndex).id

@@ -67,11 +67,11 @@ class CreateController extends Controller {
                     'error' => ERRORS::INVALID_DEPARTMENT
                 ],
                 'clientId' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('client')),
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('client'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_CLIENT
                 ],
                 'clientUserId' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('user')),
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('user'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_USER
                 ],
                 'language' => [
@@ -121,7 +121,7 @@ class CreateController extends Controller {
         $this->email = Controller::request('email');
         $this->name = Controller::request('name');
 
-        if (Controller::isStaffLogged()) {
+        if (Controller::isStaffLogged() && Controller::request('clientUserId')) {
             $this->clientUserId = Controller::request('clientUserId');
             if (!$this->validateClientUser()) {
                 throw new Exception(ERRORS::INVALID_USER);
@@ -225,7 +225,7 @@ class CreateController extends Controller {
 
             $this->email = $author->email;
             $this->name = $author->name;
-        } else {
+        } else if (Controller::request('clientUserId')) {
             $authorUser = User::getUser($this->clientUserId);
             // Now, author is instance of User, then not replace author_staff_id
             // but add author_id that represent normal user
