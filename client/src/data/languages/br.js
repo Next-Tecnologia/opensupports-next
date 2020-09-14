@@ -37,6 +37,7 @@ export default {
     'CLOSE_TICKET': 'Fechar ticket',
     'DELETE_TICKET': 'Apagar ticket',
     'NO_ATTACHMENT': 'Nenhum anexo',
+    'GET_DOCUMENT': 'Obter documento',
     'STAFF': 'Equipe',
     'CUSTOMER': 'Cliente',
     'YES': 'SIM',

@@ -316,6 +316,7 @@ class TicketViewer extends React.Component {
                         <div className="ticket-viewer__response-buttons">
                             <SubmitButton type="secondary">{i18n('RESPOND_TICKET')}</SubmitButton>
                             <div>
+                                <Button size="medium" onClick={this.onGetDocumentClick.bind(this)} style={{ marginRight: '10px' }}>{i18n('GET_DOCUMENT')}</Button>
                                 <Button size="medium" onClick={this.onCloseTicketClick.bind(this)}>{i18n('CLOSE_TICKET')}</Button>
                                 {(this.showDeleteButton())? <Button className="ticket-viewer__delete-button" size="medium" onClick={this.onDeleteTicketClick.bind(this)}>{i18n('DELETE_TICKET')}</Button> : null}
                             </div>
@@ -435,6 +436,20 @@ class TicketViewer extends React.Component {
     onDeleteTicketClick(event) {
         event.preventDefault();
         AreYouSure.openModal(null, this.deleteTicket.bind(this));
+    }
+
+    onGetDocumentClick(event) {
+        event.preventDefault();
+        API.call({
+            path: '/ticket/get-document',
+            data: {
+                ticketNumber: this.props.ticket.ticketNumber
+            }
+        }).then((result) => {
+             alert('ok');
+        }).catch((err) => {
+            alert('nok');
+        });
     }
 
     changeTitle(){

@@ -137,6 +137,7 @@ class CreateController extends Controller {
             $this->createNewUser();
         }
         
+        // MARK
         $this->storeTicket();
 
         if(!Controller::isLoginMandatory() && !Controller::isUserLogged()) {

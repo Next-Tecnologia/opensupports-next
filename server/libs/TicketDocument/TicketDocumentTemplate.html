@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <style>
+            div.container {
+                max-width: 690px;
+                margin: 0 auto;
+            }
+
+            div.ticket-section {
+                margin: 20px 0;
+            }
+
+            div.section-header {
+                background-color: #eae3e4;
+                font-weight: bold;
+            }
+
+            .d-grid {
+                display: grid;
+            }
+
+            .grid-columns-4 {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+
+            .border {
+                border: 1px solid #e1e1e1;
+            }
+
+            .text-bold {
+                font-weight: bold;
+            }
+
+            .default-pd {
+                padding: 1.5px 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="document-header" class="ticket-section border"></div>
+
+            <div id="ticket-info" class="ticket-section section-header border text-bold">
+                <div class="ticket-info-content">
+                    <span>ATENDIMENTO Nº |||TICKET_NUMBER|||</span>
+                    <span>|||TICKET_DATE|||</span>
+                </div>    
+            </div>
+
+            <div id="customer-data" class="ticket-section border">
+                <div class="section-header border text-bold">DADOS DO CLIENTE</div>
+                <div class="d-grid grid-columns-4">
+                    <div class="border default-pd text-bold">Razão social:</div>
+                    <div class="border default-pd">|||SOCIAL_NAME|||</div>
+                    <div class="border default-pd text-bold">Nome fantasia:</div>
+                    <div class="border default-pd">|||FANTASY_NAME|||</div>
+                    <div class="border default-pd text-bold">CNPJ/CPF:</div>
+                    <div class="border default-pd">|||CNPJ_CPF|||</div>
+                    <div class="border default-pd text-bold">Endereço:</div>
+                    <div class="border default-pd">|||ADDRESS|||</div>
+                    <div class="border default-pd text-bold">CEP:</div>
+                    <div class="border default-pd">|||CEP|||</div>
+                    <div class="border default-pd text-bold">Cidade/UF:</div>
+                    <div class="border default-pd">|||CITY_UF|||</div>
+                    <div class="border default-pd text-bold">Telefone:</div>
+                    <div class="border default-pd">|||PHONE|||</div>
+                    <div class="border default-pd text-bold">E-mail:</div>
+                    <div class="border default-pd">|||MAIL_ADDRESS|||</div>
+                </div>
+            </div>
+
+            <div id="general-data" class="ticket-section border">
+                <div class="section-header border text-bold">DADOS GERAIS</div>
+                <div class="d-grid grid-columns-4">
+                    <div class="border default-pd text-bold">Atendente</div>
+                    <div class="border default-pd">|||CLERK|||</div>
+                    <div class="border default-pd text-bold">Assunto</div>
+                    <div class="border default-pd">|||SUBJECT|||</div>
+                    <div class="border default-pd text-bold">Forma de atendimento</div>
+                    <div class="border default-pd">|||FORM_SERVICE|||</div>
+                    <div class="border default-pd text-bold">Situação</div>
+                    <div class="border default-pd">|||STATUS|||</div>
+                </div>
+            </div>
+
+            <div id="description" class="ticket-section border">
+                <div class="section-header border default-pd text-bold">DESCRIÇÃO</div>
+                <div class="description-content border default-pd">|||DESCRIPTION_LIST|||</div>
+            </div>
+
+            <div id="historic" class="ticket-section border">
+                <div class="section-header border default-pd text-bold">HISTÓRICO</div>
+                <div class="historic-content border default-pd">
+                    
+                    |||HISTORIC_LIST|||
+                </div>
+            </div>
+
+            <div id="customer-signature" class="ticket-section"></div>
+        </div>
+    </body>
+</html>

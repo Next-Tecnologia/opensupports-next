@@ -7,6 +7,7 @@ $ticketControllers->addController(new EditCommentController);
 $ticketControllers->addController(new EditTitleController);
 $ticketControllers->addController(new CommentController);
 $ticketControllers->addController(new TicketGetController);
+$ticketControllers->addController(new TicketGetDocumentController);
 $ticketControllers->addController(new CheckTicketController);
 $ticketControllers->addController(new AddCustomResponseController);
 $ticketControllers->addController(new DeleteCustomResponseController);

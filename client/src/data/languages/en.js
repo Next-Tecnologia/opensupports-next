@@ -36,6 +36,7 @@ export default {
     'RESPOND_TICKET': 'Respond Ticket',
     'CLOSE_TICKET': 'Close ticket',
     'DELETE_TICKET': 'Delete ticket',
+    'GET_DOCUMENT': 'Get document',
     'NO_ATTACHMENT': 'No file attachment',
     'STAFF': 'Staff',
     'CUSTOMER': 'Customer',
