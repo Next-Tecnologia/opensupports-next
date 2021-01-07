@@ -199,6 +199,11 @@ class TicketList extends React.Component {
                     className: 'ticket-list__department col-md-2'
                 },
                 {
+                    key: 'client',
+                    value: i18n('CUSTOMER'),
+                    className: 'ticket-list__author col-md-2'
+                },
+                {
                     key: 'author',
                     value: i18n('AUTHOR'),
                     className: 'ticket-list__author col-md-2'
@@ -284,6 +289,7 @@ class TicketList extends React.Component {
             ),
             department: ticket.department.name,
             author: ticket.author.name,
+            client: ticket.author.client.name ? ticket.author.client.name : '',
             date: DateTransformer.transformToString(ticket.date, false),
             unread: this.isTicketUnread(ticket),
             highlighted: this.isTicketUnread(ticket)

@@ -272,11 +272,9 @@ class DropDown extends React.Component {
                 selectedIndex: index,
                 highlightedIndex: index
             });
-
             onHighlightedIndexChange && onHighlightedIndexChange(index);
 
             onMenuToggle && onMenuToggle(false);
-
             onChange && onChange({ index });
         }
     }

@@ -1,0 +1,2 @@
+[30-Jul-2020 16:28:14 America/Fortaleza] PHP Warning:  require_once(vendor/autoload.php): failed to open stream: No such file or directory in /home1/nextfran/public_html/nexttecnologiadainformacao.com.br/suporte/index.php on line 3
+[30-Jul-2020 16:28:14 America/Fortaleza] PHP Fatal error:  require_once(): Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php73/root/usr/share/pear') in /home1/nextfran/public_html/nexttecnologiadainformacao.com.br/suporte/index.php on line 3
