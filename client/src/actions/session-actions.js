@@ -17,7 +17,7 @@ export default {
                         path: '/user/login',
                         data: _.extend(loginData, {remember: loginData.remember * 1})
                     }).then((result) => {
-                        store.dispatch(this.getUserData(result.data.userId, result.data.token, result.data.staff))
+                        store.dispatch(this.getUserData(result.data.userId, result.data.token, result.data.staff, result.data.isInternal))
                             .then(() => store.dispatch(ConfigActions.updateData()))
                             .then(() => {
                                 if(result.data.staff) {

@@ -50,6 +50,7 @@ class AdminPanelMyTickets extends React.Component {
         return {
             userId: this.props.userId,
             departments: this.props.departments,
+            isInternal: this.props.isInternal == true,
             tickets: this.props.tickets,
             type: 'secondary',
             loading: this.props.loading,
@@ -100,6 +101,7 @@ export default connect((store) => {
         userId: store.session.userId*1,
         departments: store.session.userDepartments,
         tickets: store.adminData.myTickets,
+        isInternal: store.session.isInternal == true,
         page: store.adminData.myTicketsPage,
         pages: store.adminData.myTicketsPages,
         loading: !store.adminData.myTicketsLoaded,

@@ -22,6 +22,7 @@ class CreateTicketForm extends React.Component {
     static propTypes = {
         userLogged: React.PropTypes.bool,
         isStaff: React.PropTypes.bool,
+        isInternal: React.PropTypes.bool,
         onSuccess: React.PropTypes.func,
     };
 
@@ -135,7 +136,6 @@ class CreateTicketForm extends React.Component {
 
     getDepartments() {
         const isStaff = this.props.isStaff;
-        console.log(isStaff);
         API.call({
             path: '/department/get-departments',
             dataAsForm: false,
@@ -222,11 +222,29 @@ class CreateTicketForm extends React.Component {
         );
     }
 
+    isInternalNoRender() {
+        if (
+            this.getDepartmentFromDepartmentIndex(
+                this.state.form.departmentIndex
+            )
+        ) {
+            const { id: departmentId } = this.getDepartmentFromDepartmentIndex(
+                this.state.form.departmentIndex
+            );
+            if (!this.props.isInternal && parseInt(departmentId) === 2) {
+                return null;
+            }
+        }
+        return 'CAN RENDER';
+    }
+
     renderClients() {
         if (!this.props.isStaff) {
             return null;
         }
-
+        if (!this.isInternalNoRender()) {
+            return null;
+        }
         return (
             <FormField
                 className="col-md-4"
@@ -246,6 +264,9 @@ class CreateTicketForm extends React.Component {
 
     renderUsers() {
         if (!this.props.isStaff) {
+            return null;
+        }
+        if (!this.isInternalNoRender()) {
             return null;
         }
 
@@ -374,31 +395,52 @@ class CreateTicketForm extends React.Component {
             let ticketExtraData = {};
 
             if (this.props.isStaff) {
+                if (this.props.isInternal) {
+                    ticketExtraData = {
+                        departmentId: this.getDepartmentFromDepartmentIndex(
+                            this.state.form.departmentIndex
+                        ).id,
+                        clientId: this.getClientFromClientIndex(
+                            this.state.form.clientIndex
+                        ).id,
+                        clientUserId: this.getClientUserFromClientUserIndex(
+                            this.state.form.clientUserIndex
+                        ).id,
+                    };
+                }
+                if (
+                    !this.props.isInternal &&
+                    parseInt(
+                        this.getDepartmentFromDepartmentIndex(
+                            this.state.form.departmentIndex
+                        ).id
+                    ) !== 2
+                ) {
+                    ticketExtraData = {
+                        departmentId: this.getDepartmentFromDepartmentIndex(
+                            this.state.form.departmentIndex
+                        ).id,
+                        clientId: this.getClientFromClientIndex(
+                            this.state.form.clientIndex
+                        ).id,
+                        clientUserId: this.getClientUserFromClientUserIndex(
+                            this.state.form.clientUserIndex
+                        ).id,
+                    };
+                }
+            } else {
                 ticketExtraData = {
                     departmentId: this.getDepartmentFromDepartmentIndex(
                         this.state.form.departmentIndex
                     ).id,
-                    clientId: this.getClientFromClientIndex(
-                        this.state.form.clientIndex
-                    ).id,
-                    clientUserId: this.getClientUserFromClientUserIndex(
-                        this.state.form.clientUserIndex
-                    ).id,
                 };
             }
-            else {
-                ticketExtraData = {
-                    departmentId: this.getDepartmentFromDepartmentIndex(
-                        this.state.form.departmentIndex
-                    ).id,
-                };
-            }
-            const dataPost = _.extend(formState,ticketExtraData, {captcha: captcha && captcha.getValue()});
-            console.log(dataPost);
             API.call({
                 path: '/ticket/create',
                 dataAsForm: true,
-                data: _.extend(formState,ticketExtraData, {captcha: captcha && captcha.getValue()}),
+                data: _.extend(formState, ticketExtraData, {
+                    captcha: captcha && captcha.getValue(),
+                }),
             })
                 .then(this.onTicketSuccess.bind(this, formState.email))
                 .catch(this.onTicketFail.bind(this));
@@ -458,5 +500,6 @@ export default connect(store => {
         allowAttachments: store.config['allow-attachments'],
         defaultDepartmentId: store.config['default-department-id'],
         departments: store.session.userDepartments,
+        isInternal: store.session.isInternal == true,
     };
 })(CreateTicketForm);

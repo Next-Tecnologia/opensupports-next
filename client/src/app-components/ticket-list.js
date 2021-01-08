@@ -288,8 +288,8 @@ class TicketList extends React.Component {
 
             ),
             department: ticket.department.name,
-            author: ticket.author.name,
-            client: ticket.author.client.name ? ticket.author.client.name : '',
+            author: ticket.author.name ? ticket.author.name : '',
+            client: _.isNull(ticket.author.client) ? '' : ticket.author.client.name,
             date: DateTransformer.transformToString(ticket.date, false),
             unread: this.isTicketUnread(ticket),
             highlighted: this.isTicketUnread(ticket)
