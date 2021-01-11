@@ -153,40 +153,79 @@ class CreateTicketForm extends React.Component {
     }
 
     getClients() {
+        delete this.state.form.staffClientId;
+        delete this.state.form.clientUserId;
+        delete this.state.form.clientId;
         const { id: departmentId } = this.getDepartmentFromDepartmentIndex(
             this.state.form.departmentIndex
         );
-        API.call({
-            path: '/client/get-clients-departments',
-            dataAsForm: false,
-            data: { departmentId },
-        }).then(res => {
-            if (showLogs) console.log(res.data);
+        if(parseInt(departmentId) === 2) {
+            const departmentFranchising = _.filter(SessionStore.getDepartments(),item => item.isFranchising == 1);
             this.setState(
                 {
                     ...this.state,
-                    clients: res.data.clients,
+                    clients: departmentFranchising,
                 },
                 () => this.getClientUsers()
             );
-        });
+        }
+        else {
+            API.call({
+                path: '/client/get-clients-departments',
+                dataAsForm: false,
+                data: { departmentId },
+            }).then(res => {
+                if (showLogs) console.log(res.data);
+                this.setState(
+                    {
+                        ...this.state,
+                        clients: res.data.clients,
+                    },
+                    () => this.getClientUsers()
+                );
+            });
+        }
     }
 
     getClientUsers() {
+        /*
+            departmentId is franchising.
+            In case of choosing a franchising department the client will be a company franchise (Next), with that the consultation
+            of a user becoming a Staff consultation 
+        */
         const { id: clientId } = this.getClientFromClientIndex(
             this.state.form.clientIndex
         );
-        API.call({
-            path: '/client/get-client-users',
-            dataAsForm: true,
-            data: { clientId },
-        }).then(res => {
-            if (showLogs) console.log(res.data);
-            this.setState({
-                ...this.state,
-                clientUsers: res.data.clientUsers,
+        const { id: departmentId } = this.getDepartmentFromDepartmentIndex(
+            this.state.form.departmentIndex
+        );
+        if(parseInt(departmentId) === 2 && this.props.isInternal) {
+            API.call({
+                path: '/department/get-department-staffs',
+                dataAsForm: true,
+                data: { departmentId: clientId },
+            }).then(res => {
+                if (showLogs) console.log(res.data);
+                this.setState({
+                    ...this.state,
+                    clientUsers: res.data.staffs,
+                });
             });
-        });
+        }
+        else {
+            this.setState(_.omit(this.state.form, 'staffClientId'));
+            API.call({
+                path: '/client/get-client-users',
+                dataAsForm: true,
+                data: { clientId },
+            }).then(res => {
+                if (showLogs) console.log(res.data);
+                this.setState({
+                    ...this.state,
+                    clientUsers: res.data.clientUsers,
+                });
+            });
+        }
     }
 
     getDepartmentFromDepartmentIndex(index) {
@@ -414,16 +453,24 @@ class CreateTicketForm extends React.Component {
                         this.getDepartmentFromDepartmentIndex(
                             this.state.form.departmentIndex
                         ).id
-                    ) !== 2
+                    ) === 2
                 ) {
                     ticketExtraData = {
                         departmentId: this.getDepartmentFromDepartmentIndex(
                             this.state.form.departmentIndex
                         ).id,
-                        clientId: this.getClientFromClientIndex(
-                            this.state.form.clientIndex
+                    };
+                }
+                else if(parseInt(
+                    this.getDepartmentFromDepartmentIndex(
+                        this.state.form.departmentIndex
+                    ).id
+                ) === 2 && this.props.isInternal) {
+                    ticketExtraData = {
+                        departmentId: this.getDepartmentFromDepartmentIndex(
+                            this.state.form.departmentIndex
                         ).id,
-                        clientUserId: this.getClientUserFromClientUserIndex(
+                        staffClientId: this.getClientUserFromClientUserIndex(
                             this.state.form.clientUserIndex
                         ).id,
                     };

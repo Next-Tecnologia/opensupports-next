@@ -223,7 +223,7 @@ class TicketViewer extends React.Component {
 
     renderEditableHeaders() {
         const ticket = this.props.ticket;
-        const departments = this.getDepartmentsForTransfer();
+        const departments = this.props.userDepartments;
         return (
             <div className="ticket-viewer__headers">
                 <div className="ticket-viewer__info">
@@ -232,7 +232,7 @@ class TicketViewer extends React.Component {
                             {i18n('DEPARTMENT')}
                         </div>
                         <div className="ticket-viewer__info-value">
-                            {this.props.ticket.author.staff ? (
+                            {this.props.userStaff ? (
                                 <DepartmentDropdown
                                     className="ticket-viewer__editable-dropdown"
                                     departments={departments}
@@ -883,9 +883,7 @@ class TicketViewer extends React.Component {
     getDepartmentsForTransfer() {
         // Todos os departaments são privados
         // return this.props.ticket.author.staff ? SessionStore.getDepartments() : this.getPublicDepartments();
-        return this.props.ticket.author.staff
-            ? SessionStore.getDepartments()
-            : this.getPublicDepartments();
+        return SessionStore.getDepartments();
     }
 
     showDeleteButton() {
