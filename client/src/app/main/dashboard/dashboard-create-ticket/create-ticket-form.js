@@ -447,19 +447,26 @@ class CreateTicketForm extends React.Component {
                         ).id,
                     };
                 }
-                if (
-                    !this.props.isInternal &&
-                    parseInt(
-                        this.getDepartmentFromDepartmentIndex(
-                            this.state.form.departmentIndex
-                        ).id
-                    ) === 2
-                ) {
-                    ticketExtraData = {
-                        departmentId: this.getDepartmentFromDepartmentIndex(
-                            this.state.form.departmentIndex
-                        ).id,
-                    };
+                if (!this.props.isInternal) {
+                    if(parseInt(this.getDepartmentFromDepartmentIndex(this.state.form.departmentIndex).id) === 2){
+                        ticketExtraData = {
+                            departmentId: this.getDepartmentFromDepartmentIndex(
+                                this.state.form.departmentIndex
+                            ).id,
+                        };
+                    }else {
+                        ticketExtraData = {
+                            departmentId: this.getDepartmentFromDepartmentIndex(
+                                this.state.form.departmentIndex
+                            ).id,
+                            clientId: this.getClientFromClientIndex(
+                                this.state.form.clientIndex
+                            ).id,
+                            clientUserId: this.getClientUserFromClientUserIndex(
+                                this.state.form.clientUserIndex
+                            ).id,
+                        };  
+                    }
                 }
                 else if(parseInt(
                     this.getDepartmentFromDepartmentIndex(
