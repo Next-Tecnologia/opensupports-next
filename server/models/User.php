@@ -3,7 +3,7 @@ use RedBeanPHP\Facade as RedBean;
 
 /**
  * @api {OBJECT} User User
- * @apiVersion 4.8.0
+ * @apiVersion 4.7.0
  * @apiGroup Data Structures
  * @apiParam {String} email The email of the user.
  * @apiParam {Number} id The id of the user.
@@ -33,12 +33,10 @@ class User extends DataStore {
             'verificationToken',
             'disabled',
             'xownCustomfieldvalueList',
-            'notRegistered',
-            'sharedUserList',
-            'supervisedrelation'
+            'notRegistered'
         ];
     }
-
+    
     public function getDefaultProps() {
         return [];
     }
@@ -47,19 +45,20 @@ class User extends DataStore {
         return parent::getDataStore($value, $property);
     }
 
+    public function getClient() {
+        if($this->client) {
+            return $this->client;
+        }
+    }
+
     public function canManageTicket(Ticket $ticket){
         $ticketNumberInstanceValidation = true;
-        $ticketOfSupervisedUser = false;
-        
+
         if($this->ticketNumber) {
             $ticketNumberInstanceValidation = $this->ticketNumber == $ticket->ticketNumber;
         }
-        if($this->supervisedrelation){
-            foreach( $this->supervisedrelation->sharedUserList as $user){
-                if($ticket->isAuthor($user)) $ticketOfSupervisedUser = true;
-            }
-        }
-        return (($ticket->isAuthor($this) || $ticketOfSupervisedUser) && $ticketNumberInstanceValidation);
+
+        return ($ticket->isAuthor($this) && $ticketNumberInstanceValidation);
     }
 
     public function toArray($minimal = false) {
@@ -79,8 +78,23 @@ class User extends DataStore {
             'verified' => !$this->verificationToken,
             'disabled' => $this->disabled,
             'customfields' => $this->xownCustomfieldvalueList->toArray(),
-            'notRegistered' => $this->notRegistered,
-            'supervisedrelation' => $this->supervisedrelation
+            'notRegistered' => $this->notRegistered
         ];
+    }
+
+    public function clientToArray() {
+        $client = $this->client;
+
+        if ($client && !$client->isNull()) {
+            return [
+                'id' => $client->id,
+                'name' => $client->name,
+            ];
+        } else {
+            return [
+              'id' => NULL,
+              'name' => NULL
+            ];
+        }
     }
 }

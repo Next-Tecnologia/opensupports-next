@@ -1,7 +1,7 @@
 <?php
 /**
  * @api {OBJECT} Staff Staff
- * @apiVersion 4.8.0
+ * @apiVersion 4.7.0
  * @apiGroup Data Structures
  * @apiParam {String} name Name of the staff member.
  * @apiParam {String} email Email of the staff member.
@@ -18,7 +18,6 @@ class Staff extends DataStore {
 
     public static function authenticate($userEmail, $userPassword) {
         $user = Staff::getUser($userEmail, 'email');
-
         return ($user && Hashing::verifyPassword($userPassword, $user->password)) ? $user : new NullDataStore();
     }
 
@@ -33,7 +32,8 @@ class Staff extends DataStore {
             'sharedTicketList',
             'lastLogin',
             'ownStatList',
-            'sendEmailOnNewTicket'
+            'sendEmailOnNewTicket',
+            'is_internal'
         ];
     }
 
@@ -60,6 +60,7 @@ class Staff extends DataStore {
                 'name' => $this->name,
                 'email' => $this->email,
                 'profilePic' => $this->profilePic,
+                'is_internal' => $this->is_internal,
                 'isStaff' => 1
             ];
         }

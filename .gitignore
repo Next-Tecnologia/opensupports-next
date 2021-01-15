@@ -2,6 +2,14 @@
 .jshintrc
 client/package-lock.json
 tests/Gemfile.lock
+server-old/composer.lock
+server-old/vendor
+server-old/files/*
+!server-old/files/.gitkeep
+!server-old/files/.htaccess
+server-old/.dbdata
+server-old/.fakemail
+server-old/apidoc
 server/composer.lock
 server/vendor
 server/files/*

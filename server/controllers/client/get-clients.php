@@ -26,8 +26,9 @@ class GetClientsController extends Controller {
     const METHOD = 'POST';
 
     public function validations() {
+// changed of permission 'staff_1' to 'user'
         return[
-            'permission' => 'staff_1',
+            'permission' => 'user',
             'requestData' => []
         ];
     }
@@ -50,9 +51,9 @@ class GetClientsController extends Controller {
     }
 
     private function getClientList() {
-        if ($userDepartment = $this->getUserDepartment()) {
+        if ($this->getUserDepartment() || $this->getUserDepartment() != 0) { // added second condition
             $clientQuery = 'SELECT * FROM client WHERE department_id = ?';
-            $clients = RedBean::getAll($clientQuery, [$userDepartment]);
+            $clients = RedBean::getAll($clientQuery, [$this->getUserDepartment()]); // changed $userDepartment to $this->getUserDepartment()
             return RedBean::convertToBeans('user', $clients);
         }
         return [];
@@ -62,7 +63,10 @@ class GetClientsController extends Controller {
         $user = Controller::getLoggedUser();
 
         $userDepartment = RedBean::getAll(
-            'SELECT id, dpt_id FROM user_department WHERE user_id = ? LIMIT 1',
+            'SELECT `department`.`id` AS `dpt_id` FROM `user` 
+            INNER JOIN `client` ON `client`.`id` = `user`.`client_id`
+            INNER JOIN `department` ON `department`.`id` = `client`.`department_id`
+            WHERE `user`.`id` = ? LIMIT 1',
             [$user->id]
         );
 

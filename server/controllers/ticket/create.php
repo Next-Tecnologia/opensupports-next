@@ -49,6 +49,8 @@ class CreateController extends Controller {
     private $email;
     private $name;
     private $clientUserId;
+    private $staffClientId;
+
 
     public function validations() {
         $validations = [
@@ -67,11 +69,11 @@ class CreateController extends Controller {
                     'error' => ERRORS::INVALID_DEPARTMENT
                 ],
                 'clientId' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('client')),
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('client'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_CLIENT
                 ],
                 'clientUserId' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('user')),
+                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('user'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_USER
                 ],
                 'language' => [
@@ -106,13 +108,10 @@ class CreateController extends Controller {
     }
 
     public function handler() {
-        
-        ///
         $session = Session::getInstance();
         if($session->isTicketSession())  {
             $session->clearSessionData();
         }
-        ///
 
         $this->title = Controller::request('title');
         $this->content = Controller::request('content', true);
@@ -120,14 +119,19 @@ class CreateController extends Controller {
         $this->language = Controller::request('language');
         $this->email = Controller::request('email');
         $this->name = Controller::request('name');
+        $this->staffClientId = Controller::request('staffClientId');
 
-        if (Controller::isStaffLogged()) {
+        if (Controller::isStaffLogged() && Controller::request('clientUserId')) {
             $this->clientUserId = Controller::request('clientUserId');
+            if (!$this->validateClientUser()) {
+                throw new Exception(ERRORS::INVALID_USER);
+            }
         }
         
-        if(!Controller::isStaffLogged() && Department::getDataStore($this->departmentId)->private){
-            throw new Exception(ERRORS::INVALID_DEPARTMENT);
-        }
+        // if(!Controller::isStaffLogged() && Department::getDataStore($this->departmentId)->private){
+        //     var_dump('department');
+        //     throw new Exception(ERRORS::INVALID_DEPARTMENT);
+        // }
         
         if(!Staff::getUser($this->email,'email')->isNull() || $this->isEmailInvalid()) {
             throw new Exception(ERRORS::INVALID_EMAIL);
@@ -166,7 +170,6 @@ class CreateController extends Controller {
     }
 
     private function createNewUser() {
-        
         $signupController = new SignUpController(true);
         
         Controller::setDataRequester(function ($key) {
@@ -188,6 +191,7 @@ class CreateController extends Controller {
     }
 
     private function storeTicket() {
+        
         $department = Department::getDataStore($this->getCorrectDepartmentId());
         $author = $this->getAuthor();
         $this->language = $this->getCorrectLanguage();
@@ -222,10 +226,15 @@ class CreateController extends Controller {
 
             $this->email = $author->email;
             $this->name = $author->name;
-        }
-
-        if (Controller::isStaffLogged()) {
+        } else if (Controller::request('clientUserId')) {
             $authorUser = User::getUser($this->clientUserId);
+            // Now, author is instance of User, then not replace author_staff_id
+            // but add author_id that represent normal user
+            $ticket->setAuthor($authorUser);
+            $authorUser->sharedTicketList->add($ticket);
+            $authorUser->store();
+        } else if (Controller::request('staffClientId')) { //Esse if foi feito para caso o staff responsavel pela franquia queira adicionar um chamado em nome de um outro staff
+            $authorUser = Staff::getUser($this->staffClientId);
             // Now, author is instance of User, then not replace author_staff_id
             // but add author_id that represent normal user
             $ticket->setAuthor($authorUser);
@@ -292,5 +301,15 @@ class CreateController extends Controller {
         ]);
 
         $mailSender->send();
+    }
+
+    private function validateClientUser() {
+        $clientId = Controller::request('clientId');
+        $query = 'SELECT c.id FROM client as c INNER JOIN user as u ON c.id = u.client_id WHERE c.id = ? AND u.id = ?';
+        $results = RedBeanPHP\Facade::getAll($query, [$clientId, $this->clientUserId]);
+        if (count($results) > 0) {
+            return true;
+        }
+        return false;
     }
 }

@@ -14,6 +14,7 @@ class Client extends DataStore {
     public static function getProps() {
         return [
             'name',
+            'user'
         ];
     }
 
@@ -27,5 +28,13 @@ class Client extends DataStore {
             'name' => $this->name,
             'owners' => $this->owners
         ];
+    }
+
+    public function clientToArray() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
+        
     }
 }

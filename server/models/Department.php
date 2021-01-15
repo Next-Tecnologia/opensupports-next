@@ -3,7 +3,7 @@ use RedBeanPHP\Facade as RedBean;
 
 /**
  * @api {OBJECT} Department Department
- * @apiVersion 4.8.0
+ * @apiVersion 4.7.0
  * @apiGroup Data Structures
  * @apiParam {Number} id Id of the department.
  * @apiParam {String} name Name of the department.
@@ -19,7 +19,8 @@ class Department extends DataStore {
             'name',
             'sharedTicketList',
             'owners',
-            'private'
+            'private',
+            'isFranchising'
         ];
     }
 
@@ -38,7 +39,8 @@ class Department extends DataStore {
                 'id' => $department->id,
                 'name' => $department->name,
                 'owners' => $department->owners,
-                'private' => $department->private
+                'private' => $department->private,
+                'isFranchising' => $department->is_franchising
             ];
         }
 
@@ -55,7 +57,8 @@ class Department extends DataStore {
                     'id' => $department->id,
                     'name' => $department->name,
                     'owners' => $department->owners,
-                    'private' => $department->private
+                    'private' => $department->private,
+                    'isFranchising' => $department->is_franchising
                 ];
             }
         }
@@ -67,7 +70,8 @@ class Department extends DataStore {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'owners' => $this->owners
+            'owners' => $this->owners,
+            'isFranchising' => $this->is_franchising
         ];
     }
 }

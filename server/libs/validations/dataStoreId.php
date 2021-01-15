@@ -64,8 +64,7 @@ class DataStoreId extends AbstractRule {
             'topic',
             'article',
             'customfield',
-            'tag',
-            'client'
+            'tag'
         ]);
     }
 }

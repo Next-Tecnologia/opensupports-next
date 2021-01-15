@@ -4,7 +4,7 @@ use Respect\Validation\Validator as DataValidator;
 
 /**
  * @api {post} /user/get-users Get users list
- * @apiVersion 4.8.0
+ * @apiVersion 4.7.0
  *
  * @apiName Get users list
  *
@@ -80,17 +80,18 @@ class GetUsersController extends Controller {
     }
 
     private function getUserList() {
-        $query = $this->getSearchQuery();
 
         $userQuery = 'SELECT * FROM user';
         $searchQuery = $this->getSearchQuery();
         $haveSearch = !empty(Controller::request('search'));
-
+        
         if ($userDepartment = $this->getUserDepartment()) {
-            $userQuery.= ' JOIN user_department ud ON user.id = ud.user_id WHERE ud.dpt_id = ? ';
+            $userQuery.= ' INNER JOIN `client` ON `client`.`id` = `user`.`client_id`
+            INNER JOIN `department` ON `department`.`id` = `client`.`department_id` WHERE `department`.`id` = ? ';
             $userQuery.= ($haveSearch) ? ' AND ' : '';
             $userQuery.=  $searchQuery;
-
+            var_dump($userQuery);
+            die;
             $binds = [$userDepartment];
             if ($haveSearch) {
                 $binds[] = '%' . Controller::request('search') . '%';
@@ -120,7 +121,7 @@ class GetUsersController extends Controller {
         $query = '';
 
         if(Controller::request('search')) {
-            $query .= " (name LIKE ? OR email LIKE ? )";
+            $query .= " (user.name LIKE ? OR user.email LIKE ? )";
         }
 
         $usersQuantity = User::count($query, [
@@ -135,8 +136,8 @@ class GetUsersController extends Controller {
         $query = '';
 
         if(Controller::request('search')) {
-            $query .= " (name LIKE ? OR email LIKE ? )";
-            $query .= " ORDER BY CASE WHEN (name LIKE ? OR email LIKE ?)";
+            $query .= " (user.name LIKE ? OR user.email LIKE ? )";
+            $query .= " ORDER BY CASE WHEN (user.name LIKE ? OR user.email LIKE ?)";
             $query .= " THEN 1 ELSE 2 END ASC,";
         } else {
             $query .= " ORDER BY ";
@@ -170,7 +171,10 @@ class GetUsersController extends Controller {
         $user = Controller::getLoggedUser();
 
         $userDepartment = RedBean::getAll(
-            'SELECT id, dpt_id FROM user_department WHERE user_id = ? LIMIT 1',
+            'SELECT `department`.`id` AS `dpt_id` FROM `user` 
+            INNER JOIN `client` ON `client`.`id` = `user`.`client_id`
+            INNER JOIN `department` ON `department`.`id` = `client`.`department_id`
+            WHERE `user`.`id` = ? LIMIT 1',
             [$user->id]
         );
 

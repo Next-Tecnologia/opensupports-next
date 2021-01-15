@@ -17,10 +17,20 @@ if(defined('MYSQL_HOST') && defined('MYSQL_DATABASE') && defined('MYSQL_USER') &
 \Slim\Slim::registerAutoLoader();
 $app = new \Slim\Slim();
 
+// Teste
+function exception_handler($exception) {
+    echo $exception;
+}
+set_exception_handler('exception_handler');
 // LOAD CONTROLLERS
 foreach (glob('controllers/*.php') as $controller) {
     include_once $controller;
 }
+error_reporting(E_ALL);
+set_error_handler(function ($severity, $message, $file, $line) {
+        echo $severity . ' ' . $message . " at " . $file . ':' . $line;
+});
+// Teste Fim
 
 Controller::init();
 $app->run();

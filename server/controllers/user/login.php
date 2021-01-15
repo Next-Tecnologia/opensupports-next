@@ -54,7 +54,6 @@ class LoginController extends Controller {
             if($this->userInstance->verificationToken !== null) {
                 throw new RequestException(ERRORS::UNVERIFIED_USER);
             }
-
             if($this->userInstance->disabled) {
                 throw new RequestException(ERRORS::USER_DISABLED);
             }
@@ -74,7 +73,6 @@ class LoginController extends Controller {
 
     private function checkInputCredentials() {
         $this->userInstance = $this->getUserByInputCredentials();
-
         return !$this->userInstance->isNull();
     }
 
@@ -94,6 +92,7 @@ class LoginController extends Controller {
         return array(
             'userId' => $userInstance->id,
             'userEmail' => $userInstance->email,
+            'isInternal' => $userInstance->isInternal == true,
             'staff' => !!Controller::request('staff'),
             'token' => Session::getInstance()->getToken(),
             'rememberToken' => $this->rememberToken,

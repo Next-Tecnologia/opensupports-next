@@ -1,2 +1,10 @@
 # Deps
 vendor
+
+# IDEs & Editors
+.idea
+.vscode
+.code
+
+# Envs
+config.php

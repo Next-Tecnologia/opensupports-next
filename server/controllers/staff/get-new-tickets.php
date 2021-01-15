@@ -44,6 +44,8 @@ class GetNewTicketsStaffController extends Controller {
     public function handler() {
         $page = Controller::request('page');
         $departmentId = Controller::request('departmentId');
+        $lineByPage = Controller::request('lineByPage') ? Controller::request('lineByPage') : 10;
+        $offset = ($page-1)*(int)$lineByPage;
 
         if (Ticket::isTableEmpty()) {
             Response::respondSuccess([
@@ -76,14 +78,14 @@ class GetNewTicketsStaffController extends Controller {
         $countTotal = Ticket::count($query);
 
         $query .= ' ORDER BY unread_staff DESC';
-        $query .= ' LIMIT 10 OFFSET ' . ($page-1)*10;
+        $query .= ' LIMIT ' . $lineByPage . ' OFFSET ' . $offset;
 
         $ticketList = Ticket::find($query);
 
         Response::respondSuccess([
             'tickets' => $ticketList->toArray(true),
             'page' => $page,
-            'pages' => ceil($countTotal / 10)
+            'pages' => ceil($countTotal / $lineByPage)
         ]);
     }
 }

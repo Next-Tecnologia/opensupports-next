@@ -13,6 +13,7 @@ class Response {
 
         $app = \Slim\Slim::getInstance();
         $app->response->headers->set('Content-Type', 'application/json');
+        $app->response->headers->set('Access-Control-Allow-Origin', '*');
         $app->response->setBody(json_encode(self::$response));
         $app->response->finalize();
     }
@@ -25,6 +26,7 @@ class Response {
 
         $app = \Slim\Slim::getInstance();
         $app->response->headers->set('Content-Type', 'application/json');
+        $app->response->headers->set('Access-Control-Allow-Origin', '*');
         $app->response->setBody(json_encode(self::$response));
         $app->response->finalize();
     }
