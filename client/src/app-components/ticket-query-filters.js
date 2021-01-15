@@ -397,7 +397,7 @@ class TicketQueryFilters extends React.Component {
 export default connect((store) => {
     return {
         tags: store.config.tags,
-        departments: store.config.departments,
+        departments: store.session.userDepartments,
         staffList: store.adminData.staffMembers,
         formState: store.searchFilters.form,
         filters: store.searchFilters.listConfig.filters,
