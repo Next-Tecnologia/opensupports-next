@@ -457,5 +457,6 @@ export default {
     'TEST_SMTP_CONNECTION': 'Testar conexão SMTP',
     'SERVER_ERROR': 'Não é possível se conectar ao servidor.',
     'EMAIL_SERVER_ADDRESS': 'Endereço do servidor de email',
-    'EMAIL_SERVER_ADDRESS_DESCRIPTION': 'Endereço onde os e-mails serão recebidos e enviados'
+    'EMAIL_SERVER_ADDRESS_DESCRIPTION': 'Endereço onde os e-mails serão recebidos e enviados',
+    'PRIORITY': 'Prioridade'
 };

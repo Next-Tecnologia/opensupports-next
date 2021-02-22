@@ -21,6 +21,7 @@ class TicketEvent extends React.Component {
             'CLOSE',
             'RE_OPEN',
             'DEPARTMENT_CHANGED',
+            'PRIORITY_CHANGED'
         ]),
         author: React.PropTypes.object,
         content: React.PropTypes.string,
@@ -83,9 +84,21 @@ class TicketEvent extends React.Component {
             'CLOSE': this.renderClosed.bind(this),
             'RE_OPEN': this.renderReOpened.bind(this),
             'DEPARTMENT_CHANGED': this.renderDepartmentChange.bind(this),
+            'PRIORITY_CHANGED': this.renderPriorityChange.bind(this)
         };
 
         return renders[this.props.type]();
+    }
+
+    renderPriorityChange() {
+        return (
+            <div className="ticket-event__circled">
+                <span className="ticket-event__circled-author">{this.props.author.name}</span>
+                <span className="ticket-event__circled-text"> {i18n('ACTIVITY_PRIORITY_CHANGED_THIS')}</span>
+                <span className="ticket-event__circled-indication"> {this.props.content}</span>
+                <span className="ticket-event__circled-date"> {i18n('DATE_PREFIX')} {DateTransformer.transformToString(this.props.date)}</span>
+            </div>
+        );
     }
 
     renderComment() {
@@ -257,6 +270,7 @@ class TicketEvent extends React.Component {
             'CLOSE': true,
             'RE_OPEN': true,
             'DEPARTMENT_CHANGED': true,
+            'PRIORITY_CHANGED': true
         };
         const classes = {
             'row': true,
@@ -267,6 +281,7 @@ class TicketEvent extends React.Component {
             'ticket-event_close': this.props.type === 'CLOSE',
             'ticket-event_reopen': this.props.type === 'RE_OPEN',
             'ticket-event_department': this.props.type === 'DEPARTMENT_CHANGED',
+            'ticket-event_priority': this.props.type === 'PRIORITY_CHANGED',
             'ticket-event_private': this.props.private*1,
         };
 
@@ -281,6 +296,7 @@ class TicketEvent extends React.Component {
             'CLOSE': 'lock',
             'RE_OPEN': 'unlock-alt',
             'DEPARTMENT_CHANGED': 'exchange',
+            'PRIORITY_CHANGED': 'exclamation'
         };
         const iconSize = {
             'COMMENT': '2x',
@@ -289,6 +305,7 @@ class TicketEvent extends React.Component {
             'CLOSE': 'lg',
             'RE_OPEN': 'lg',
             'DEPARTMENT_CHANGED': 'lg',
+            'PRIORITY_CHANGED': 'lg'
         };
 
         return {

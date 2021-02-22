@@ -199,6 +199,11 @@ class TicketList extends React.Component {
                     className: 'ticket-list__department col-md-2'
                 },
                 {
+                    key: 'priority',
+                    value: i18n('PRIORITY'),
+                    className: 'ticket-list__priority col-md-1'
+                },
+                {
                     key: 'client',
                     value: i18n('CUSTOMER'),
                     className: 'ticket-list__author col-md-2'
@@ -287,6 +292,7 @@ class TicketList extends React.Component {
                 </div>
 
             ),
+            priority: this.getTicketPriority(ticket.priority),
             department: ticket.department.name,
             author: ticket.author.name ? ticket.author.name : '',
             client: _.isNull(ticket.author.client) ? '' : ticket.author.client.name,
@@ -294,6 +300,24 @@ class TicketList extends React.Component {
             unread: this.isTicketUnread(ticket),
             highlighted: this.isTicketUnread(ticket)
         };
+    }
+
+    getTicketPriority(priority) {
+        if(priority == 'high'){
+            return (
+                <span className="ticket-list__priority-high">{i18n('HIGH')}</span>
+            );
+        }
+        if(priority == 'medium'){
+            return (
+                <span className="ticket-list__priority-medium">{i18n('MEDIUM')}</span>
+            );
+        }
+        if(priority == 'low'){
+            return (
+                <span className="ticket-list__priority-low">{i18n('LOW')}</span>
+            );
+        }
     }
 
     isTicketUnread(ticket) {
