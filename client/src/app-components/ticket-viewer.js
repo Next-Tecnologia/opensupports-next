@@ -222,8 +222,21 @@ class TicketViewer extends React.Component {
     }
 
     renderEditableHeaders() {
+        
         const ticket = this.props.ticket;
         const departments = this.props.userDepartments;
+        
+        const priorities = {
+            'low': 0,
+            'medium': 1,
+            'high': 2
+        };
+        const priorityList = [
+            {content: i18n('LOW')},
+            {content: i18n('MEDIUM')},
+            {content: i18n('HIGH')}
+        ];
+
         return (
             <div className="ticket-viewer__headers">
                 <div className="ticket-viewer__info">
@@ -278,6 +291,18 @@ class TicketViewer extends React.Component {
                         </div>
                         <div className="ticket-viewer__info-value">
                             {ticket.author.name}
+                        </div>
+                    </div>
+                    <div className="ticket-viewer__info-container-editable">
+                        <div className="ticket-viewer__info-header">
+                        <div className="col-md-4">{i18n('PRIORITY')}</div>
+                        </div>
+                        <div className="col-md-4">
+                            <DropDown
+                                className="ticket-viewer__editable-dropdown"
+                                items={priorityList}
+                                selectedIndex={priorities[ticket.priority]}
+                                onChange={this.onPriorityDropdownChanged.bind(this)} />
                         </div>
                     </div>
                     <div className="ticket-viewer__info-container-editable">
@@ -615,6 +640,10 @@ class TicketViewer extends React.Component {
         AreYouSure.openModal(null, this.closeTicket.bind(this));
     }
 
+    onPriorityDropdownChanged(event) {
+        AreYouSure.openModal(null, this.changePriority.bind(this, event.index));
+    }
+
     onDeleteTicketClick(event) {
         event.preventDefault();
         AreYouSure.openModal(null, this.deleteTicket.bind(this));
@@ -692,6 +721,22 @@ class TicketViewer extends React.Component {
                 ? this.onTicketModification.bind(this)
                 : history.goBack()
         );
+    }
+
+    changePriority(index) {
+        const priorities = [
+            'low',
+            'medium',
+            'high'
+        ];
+
+        API.call({
+            path: '/ticket/change-priority',
+            data: {
+                ticketNumber: this.props.ticket.ticketNumber,
+                priority: priorities[index]
+            }
+        }).then(this.onTicketModification.bind(this));
     }
 
     addTag(tag) {

@@ -7,6 +7,7 @@ import API from 'lib-app/api-call';
 import DateTransformer from 'lib-core/date-transformer';
 import Icon from 'core-components/icon';
 import Tooltip from 'core-components/tooltip';
+import TextEditor from 'core-components/text-editor';
 import Button from 'core-components/button';
 import SubmitButton from 'core-components/submit-button';
 import Form from 'core-components/form';
@@ -90,17 +91,6 @@ class TicketEvent extends React.Component {
         return renders[this.props.type]();
     }
 
-    renderPriorityChange() {
-        return (
-            <div className="ticket-event__circled">
-                <span className="ticket-event__circled-author">{this.props.author.name}</span>
-                <span className="ticket-event__circled-text"> {i18n('ACTIVITY_PRIORITY_CHANGED_THIS')}</span>
-                <span className="ticket-event__circled-indication"> {this.props.content}</span>
-                <span className="ticket-event__circled-date"> {i18n('DATE_PREFIX')} {DateTransformer.transformToString(this.props.date)}</span>
-            </div>
-        );
-    }
-
     renderComment() {
         const author = this.props.author;
         const customFields = (author && author.customfields) || [];
@@ -125,7 +115,7 @@ class TicketEvent extends React.Component {
 
     renderContent() {
         return (
-            <div  className="ticket-event__comment-content ql-editor">
+            <div  className="ticket-event__comment-content">
                 <div dangerouslySetInnerHTML={{__html: this.props.content}}></div>
                 {((this.props.author.id == this.props.userId && this.props.author.staff == this.props.userStaff) || this.props.userStaff) ? this.renderEditIcon() : null}
             </div>
@@ -210,6 +200,17 @@ class TicketEvent extends React.Component {
             <div className="ticket-event__circled">
                 <span className="ticket-event__circled-author">{this.props.author.name}</span>
                 <span className="ticket-event__circled-text"> {i18n('ACTIVITY_DEPARTMENT_CHANGED_THIS')}</span>
+                <span className="ticket-event__circled-indication"> {this.props.content}</span>
+                <span className="ticket-event__circled-date"> {i18n('DATE_PREFIX')} {DateTransformer.transformToString(this.props.date)}</span>
+            </div>
+        );
+    }
+
+    renderPriorityChange() {
+        return (
+            <div className="ticket-event__circled">
+                <span className="ticket-event__circled-author">{this.props.author.name}</span>
+                <span className="ticket-event__circled-text"> {i18n('ACTIVITY_PRIORITY_CHANGED_THIS')}</span>
                 <span className="ticket-event__circled-indication"> {this.props.content}</span>
                 <span className="ticket-event__circled-date"> {i18n('DATE_PREFIX')} {DateTransformer.transformToString(this.props.date)}</span>
             </div>
