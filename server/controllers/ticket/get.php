@@ -31,7 +31,6 @@ class TicketGetController extends Controller {
     private $ticket;
 
     public function validations() {
-        $session = Session::getInstance();
         return [
             'permission' => 'user',
             'requestData' => [

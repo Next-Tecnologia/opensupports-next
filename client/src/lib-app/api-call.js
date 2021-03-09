@@ -26,11 +26,11 @@ function processData (data, dataAsForm = false) {
 
 module.exports = {
     call: function ({path, data, plain, dataAsForm}) {
-        if(showLogs) console.log('request ' + path, data);
+        // if(showLogs) console.log('request ' + path, data);
         return new Promise(function (resolve, reject) {
             APIUtils.post(apiRoot + path, processData(data, dataAsForm), dataAsForm)
                 .then(function (result) {
-                    if(showLogs) console.log(result);
+                    // if(showLogs) console.log(result);
 
                     if (plain || result.status === 'success') {
                         resolve(result);

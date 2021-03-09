@@ -67,7 +67,7 @@ abstract class Controller {
 
     public static function getLoggedUser() {
         $session = Session::getInstance();
-
+        
         if ($session->isStaffLogged()) {
             return Staff::getUser($session->getUserId());
         } else {
@@ -80,7 +80,7 @@ abstract class Controller {
 
     public static function isUserLogged() {
         $session = Session::getInstance();
-
+        
         return $session->checkAuthentication(array(
             'userId' => Controller::request('csrf_userid'),
             'token' => Controller::request('csrf_token')

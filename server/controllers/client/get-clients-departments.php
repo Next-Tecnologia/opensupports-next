@@ -57,8 +57,18 @@ class GetClientDepartmentsController extends Controller {
 
     private function getClientUsers() {
         $departmentId = Controller::request('departmentId');
-        $query = 'SELECT * FROM `client` 
-        WHERE `client`.`department_id` = ?';
+        //TODO This code is intended to limit departments with users who are franchises
+        // $dataIsInternal = Controller::request('dataIsInternal');
+        // if ($dataIsInternal == 0) {
+        //     $query = 'SELECT * FROM `client`
+        //     INNER JOIN `department` ON `department`.`id` = `client`.`department_id`
+        //     WHERE `client`.`department_id` = ?
+        //     AND `department`.`is_franchising` = true';
+        // }
+        // else {
+            $query = 'SELECT * FROM `client` 
+            WHERE `client`.`department_id` = ?';
+        // }
         if (!$clientUsers = RedBean::getAll($query, [$departmentId])) {
             return[];
         }

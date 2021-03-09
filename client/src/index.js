@@ -37,8 +37,7 @@ let renderApplication = function () {
 window.store = store;
 
 let unsubscribe = store.subscribe(() => {
-    if(showLogs) console.log(store.getState());
-
+    // if(showLogs) (store.getSconsole.logtate());
     if (store.getState().session.initDone && store.getState().config.initDone) {
         unsubscribe();
         renderApplication();

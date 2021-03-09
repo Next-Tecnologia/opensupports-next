@@ -49,8 +49,9 @@ class Staff extends DataStore {
         return parent::getDataStore($value, $property);
     }
 
-    public function canManageTicket(Ticket $ticket){
-        return $this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId;
+    public function canManageTicket(Ticket $ticket)
+    {
+        return ($this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId) && $this->is_internal == 1;
     }
 
     public function toArray($minimal = false) {

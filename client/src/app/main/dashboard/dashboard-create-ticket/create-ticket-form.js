@@ -141,7 +141,7 @@ class CreateTicketForm extends React.Component {
             dataAsForm: false,
             data: { isStaff },
         }).then(res => {
-            if (showLogs) console.log(res.data);
+            // if (showLogs) console.log(res.data);
             this.setState(
                 {
                     ...this.state,
@@ -156,6 +156,7 @@ class CreateTicketForm extends React.Component {
         delete this.state.form.staffClientId;
         delete this.state.form.clientUserId;
         delete this.state.form.clientId;
+        const dataIsInternal = this.props.isInternal
         const { id: departmentId } = this.getDepartmentFromDepartmentIndex(
             this.state.form.departmentIndex
         );
@@ -173,9 +174,9 @@ class CreateTicketForm extends React.Component {
             API.call({
                 path: '/client/get-clients-departments',
                 dataAsForm: false,
-                data: { departmentId },
+                data: { departmentId, dataIsInternal },
             }).then(res => {
-                if (showLogs) console.log(res.data);
+                // if (showLogs) console.log(res.data);
                 this.setState(
                     {
                         ...this.state,
@@ -205,7 +206,7 @@ class CreateTicketForm extends React.Component {
                 dataAsForm: true,
                 data: { departmentId: clientId },
             }).then(res => {
-                if (showLogs) console.log(res.data);
+                // if (showLogs) console.log(res.data);
                 this.setState({
                     ...this.state,
                     clientUsers: res.data.staffs,
@@ -219,7 +220,7 @@ class CreateTicketForm extends React.Component {
                 dataAsForm: true,
                 data: { clientId },
             }).then(res => {
-                if (showLogs) console.log(res.data);
+                // if (showLogs) console.log(res.data);
                 this.setState({
                     ...this.state,
                     clientUsers: res.data.clientUsers,
