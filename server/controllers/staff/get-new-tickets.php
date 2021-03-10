@@ -60,7 +60,13 @@ class GetNewTicketsStaffController extends Controller {
 
         $query = ' (';
         foreach ($user->sharedDepartmentList as $department) {
-            $query .= 'department_id=' . $department->id . ' OR ';
+            // $query .= 'department_id=' . $department->id . ' OR ';
+            if($user->is_internal) {
+                $query .= 'department_id=' . $department->id . ' OR ';
+            } else {
+                if($department->id != 2) 
+                    $query .= 'department_id=' . $department->id . ' OR ';
+            }
         }
 
         $ownerExists = RedBean::exec('SHOW COLUMNS FROM ticket LIKE \'owner_id\'');

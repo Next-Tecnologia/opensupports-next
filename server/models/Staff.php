@@ -54,9 +54,13 @@ class Staff extends DataStore {
         if($this->is_internal) {
             return $this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId;
         } else {
-            return ($this->sharedDepartmentList->includesId($ticket->departmentId) && $ticket->departmentId != 2) || $this->id === $ticket->authorStaffId;
+            if($ticket->departmentId == 2) {
+                return $this->id === $ticket->authorStaffId || $ticket->isOwner($this);
+            }else {
+                return $this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId;
+            }
         }
-        // return ($this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId) && $this->is_internal == 1;
+        // return $this->sharedDepartmentList->includesId($ticket->departmentId) || $this->id === $ticket->authorStaffId ;
     }
 
     public function toArray($minimal = false) {
